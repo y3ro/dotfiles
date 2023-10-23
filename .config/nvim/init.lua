@@ -7,7 +7,10 @@ Derived from TJ's Kickstart (https://github.com/nvim-lua/kickstart.nvim)
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = '  '
+
+-- TODO: warn that things might be broken at the start if you don't have the external
+-- dependencies (nodejs, for instance)
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -162,6 +165,14 @@ require('lazy').setup({
     },
   },
 
+  -- SEXP
+  {
+    'guns/vim-sexp',
+  },
+  {
+    'tpope/vim-sexp-mappings-for-regular-people',
+  },
+
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -169,6 +180,36 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     build = ':TSUpdate',
+  },
+
+  { 'Olical/conjure',
+    ft = { "clojure", "fennel", "python", "lua" },
+    dependencies = {
+      {
+        "PaterJason/cmp-conjure",
+        config = function()
+          local cmp = require("cmp")
+          local config = cmp.get_config()
+          table.insert(config.sources, {
+            name = "buffer",
+            option = {
+              sources = {
+                { name = "conjure" },
+              },
+            },
+          })
+          cmp.setup(config)
+        end,
+      },
+    },
+    config = function()
+      require("conjure.main").main()
+      require("conjure.mapping")["on-filetype"]()
+    end,
+    init = function()
+      -- Set configuration options here
+      vim.g["conjure#debug"] = false
+    end,
   },
 }, {})
 
@@ -279,7 +320,7 @@ vim.keymap.set('n', '<leader>sc', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'clojure', 'fennel' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -418,6 +459,7 @@ local servers = {
   -- clangd = {},
   gopls = {},
   pyright = {},
+  clojure_lsp = {},
   -- rust_analyzer = {},
   -- tsserver = {},
   html = { filetypes = { 'html' } },
