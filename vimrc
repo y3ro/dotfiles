@@ -9,6 +9,8 @@ set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
 
+set clipboard=unnamedplus
+
 nnoremap <c-k> <esc>
 inoremap <c-k> <esc>
 vnoremap <c-k> <esc>
