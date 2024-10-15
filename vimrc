@@ -5,6 +5,7 @@ set shortmess-=S
 set mouse=a
 
 set tabstop=4
+set shiftwidth=4
 
 nnoremap <c-k> <esc>
 inoremap <c-k> <esc>
